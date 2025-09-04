@@ -8,7 +8,8 @@ function FileUpload() {
   const [downloadLink, setDownloadLink] = useState("");
   const dropRef = useRef();
 
-  const BACKEND = "http://localhost:5050"; // Make sure backend port is correct
+  // Use the deployed backend URL
+  const BACKEND = "https://ai-data-platform.onrender.com";
 
   const handleFile = (selectedFile) => {
     setFile(selectedFile);
@@ -49,7 +50,7 @@ function FileUpload() {
     document.querySelector('input[type="file"]').click();
   };
 
-  // Blob download function to avoid CORS issue
+  // Blob download function
   const triggerDownload = async (url, filename) => {
     try {
       const res = await fetch(url);
@@ -97,10 +98,10 @@ function FileUpload() {
 
       setMessage(data.message || "File uploaded and cleansed successfully.");
       setPreviewData(data.data || []);
-      setDownloadLink(`${BACKEND}/download/${data.download.split("/").pop()}`);
+      setDownloadLink(data.download);
 
       // Automatically trigger download
-      triggerDownload(`${BACKEND}/download/${data.download.split("/").pop()}`, `cleansed_${file.name}`);
+      triggerDownload(data.download, `cleansed_${file.name}`);
     } catch (err) {
       console.error("Upload error:", err);
       setMessage("Error uploading file. Check console for details.");
