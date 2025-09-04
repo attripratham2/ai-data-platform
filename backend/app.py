@@ -1,4 +1,3 @@
-# app.py
 import os
 import uuid
 import json
@@ -13,7 +12,9 @@ from sklearn.preprocessing import LabelEncoder
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 UPLOAD_DIR = os.path.join(BASE_DIR, "uploads")
 HISTORY_FILE = os.path.join(BASE_DIR, "history.json")
-BACKEND_URL = "http://localhost:5050"
+
+# Use the deployed backend URL here
+BACKEND_URL = "https://ai-data-platform.onrender.com"
 
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 if not os.path.exists(HISTORY_FILE):
@@ -22,9 +23,10 @@ if not os.path.exists(HISTORY_FILE):
 
 app = FastAPI()
 
+# CORS: allow frontend (Netlify) and any other origins
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*"],  # You can restrict this to your Netlify URL
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -45,12 +47,10 @@ def save_history(original_name, cleansed_name):
 # ---------------- Cleanse ----------------
 @app.post("/cleanse")
 async def cleanse_data(file: UploadFile = File(...), column_strategy: str = Form(None)):
-    # Create timestamped filename
     timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
     cleansed_filename = f"cleansed_{timestamp}_{file.filename}"
     file_path = os.path.join(UPLOAD_DIR, cleansed_filename)
 
-    # Save uploaded file temporarily
     temp_path = os.path.join(UPLOAD_DIR, f"temp_{file.filename}")
     with open(temp_path, "wb") as f:
         f.write(await file.read())
@@ -69,7 +69,6 @@ async def cleanse_data(file: UploadFile = File(...), column_strategy: str = Form
     df.insert(0, "primary_key", [str(uuid.uuid4()) for _ in range(len(df))])
     df = df.drop_duplicates()
 
-    # Column strategy
     strategies = {}
     if column_strategy:
         try:
@@ -100,11 +99,9 @@ async def cleanse_data(file: UploadFile = File(...), column_strategy: str = Form
         if df[col].dtype == "object":
             df[col] = LabelEncoder().fit_transform(df[col].astype(str))
 
-    # Save cleansed file
     df.to_csv(file_path, index=False)
     os.remove(temp_path)
 
-    # Save to history
     save_history(file.filename, cleansed_filename)
 
     return {
