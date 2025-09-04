@@ -1,6 +1,6 @@
 // frontend/src/api.js
 
-const BACKEND = "http://localhost:5050";
+const BACKEND = "https://your-backend.onrender.com";
 
 // ------------------- Cleanse File -------------------
 export async function cleanseFile(file, columnStrategy = null) {
