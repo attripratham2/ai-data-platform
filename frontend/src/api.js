@@ -1,6 +1,7 @@
 // frontend/src/api.js
 
-const BACKEND = "https://your-backend.onrender.com";
+const BACKEND = "https://ai-data-platform.onrender.com";
+
 
 // ------------------- Cleanse File -------------------
 export async function cleanseFile(file, columnStrategy = null) {
