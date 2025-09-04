@@ -1,0 +1,23 @@
+/* Sidebar link default style */
+.sidebar-link {
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+/* Hover effect */
+.sidebar-link:hover {
+  background-color: #374151;
+}
+
+/* Active route highlight */
+.active-link {
+  background-color: #4f46e5;
+  color: white;
+  font-weight: bold;
+}
